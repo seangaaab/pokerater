@@ -14,6 +14,7 @@ import {
 	increment,
 } from "firebase/firestore";
 import "./App.css";
+import { async } from "@firebase/util";
 
 // Your task is to add the functionality to add, toggle, and delete todos. Goodluck!
 // The name of the collection is "todos". You can rename it if you want. 
@@ -24,6 +25,18 @@ function App() {
 
 	const [first_pokemon, setFirstPokemon] = useState({});
 	const [second_pokemon, setSecondPokemon] = useState({});
+	const call_pokemon = async (first, second) => {
+		const response1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${first}/`);
+		const data1 = await response1.json();
+		console.log(data1);
+		setFirstPokemon(data1);
+
+		const response2 = await fetch(`https://pokeapi.co/api/v2/pokemon/${second}/`);
+		const data2 = await response2.json();
+		console.log(data2);
+		setSecondPokemon(data2);
+	}
+
 
 	async function votePokemon(id) {
 		const pokemonRef = doc(db, "pokemon", id)
@@ -35,18 +48,33 @@ function App() {
 			}
 		)
 	}
-
+	
 	async function voteAgainstPokemon(id) {
 		const pokemonRef = doc(db, "pokemon", id)
 		await updateDoc(
 			pokemonRef,
 			{
-				votes_against: increment(1),
+				votes_against: 1,
 				score: increment(-1)
 			}
 		)
 	}
 
+	async function vote1(event) {
+		event.preventDefault();
+		votePokemon(first_pokemon.name)
+		voteAgainstPokemon(second_pokemon.name)
+		const [firstRand, secondRand] = randomizer();
+		call_pokemon(firstRand, secondRand)
+	}
+
+	async function vote2(event) {
+		event.preventDefault();
+		votePokemon(second_pokemon.name)
+		voteAgainstPokemon(first_pokemon.name)
+		const [firstRand, secondRand] = randomizer();
+		call_pokemon(firstRand, secondRand)
+	}
 	useEffect(() => {
 		const sortedPokemons = query(
 			collection(db, "pokemon"),
@@ -108,12 +136,12 @@ function App() {
 							<div className="card">
 								<img src={first_pokemon.sprites?.front_default} />
 								<h3>Name: {first_pokemon.name}</h3>
-								<button className="btn">Vote</button>
+								<button className="btn" onClick={vote1}>Vote</button>
 							</div>
 							<div className="card">
 								<img src={second_pokemon.sprites?.front_default} />
 								<h3>Name: {second_pokemon.name}</h3>
-								<button className="btn">Vote</button>
+								<button className="btn" onClick={vote2}>Vote</button>
 							</div>
 						</div>
 					</form>
@@ -127,9 +155,9 @@ function App() {
 					{
 						pokemons.map((pokemon) => (
 							<div className="row" key={pokemon.id}>
-									<p>{pokemon.name}</p>
-									<p>{pokemon.votes}</p>
-									<p>{pokemon.score}</p>
+								<p>{pokemon.name}</p>
+								<p>{pokemon.votes}</p>
+								<p>{pokemon.score}</p>
 							</div>
 						))
 					}
