@@ -1,0 +1,10 @@
+{
+
+  "hosting": {
+
+    "site": "pokerater-hackathon",
+
+    "public": "public"
+  }
+
+}
