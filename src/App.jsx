@@ -21,6 +21,9 @@ function App() {
 	const [pokemons, setPokemons] = useState([]);
 	const [input, setInput] = useState("");
 
+	const [first_pokemon, setFirstPokemon] = useState({});
+	const [second_pokemon, setSecondPokemon] = useState({});
+
 	async function addPokemon(event) {
 		event.preventDefault();
 
@@ -55,41 +58,66 @@ function App() {
 			);
 		});
 
+		const [first, second] = randomizer();
+		const call_pokemon = async (first, second) => { 
+			const response1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${first}/`);
+			const data1 = await response1.json();
+			console.log(data1);
+			setFirstPokemon(data1);
+
+			const response2 = await fetch(`https://pokeapi.co/api/v2/pokemon/${second}/`);
+			const data2 = await response2.json();
+			console.log(data2);
+			setSecondPokemon(data2);
+		}
+		call_pokemon(first, second).catch((error) => { 
+			console.log(error);
+		});
 		return unsubscribe;
 	}, []);
 
-	const name = fetch("https://pokeapi.co/api/v2/pokemon/1/sprites/front_default")
-	console.log(name)
+
+	function randomizer() {
+		let rand1 = Math.floor(Math.random() * 151);
+		let rand2 = Math.floor(Math.random() * 151);
+
+		if(rand2 == rand1) {
+			randomizer();
+		}
+
+		return [rand1, rand2];
+	}
+
+	// const name = fetch("")
+	// console.log(first_pokemon.sprites["front_default"]);
 
 	return (
-	<section className="container">
-		<h1>Pokerater</h1>
-		<div>
-			<form onSubmit={addPokemon}>
-				<img src="https://pokeapi.co/api/v2/pokemon/1/sprites/front_default" />
-				<h3>Name: </h3>
-				<h3>Rank: </h3>
-				<p>Score: </p>
-				<span>
-					<button>Up Vote</button>
-					<button>Down Vote</button>
-				</span>
-			</form>
-		</div>
-		<div>
-			{
-				pokemons.map((pokemon) => (
-					<div key={pokemon.id}>
-						<h3>{pokemon.name}</h3>
-						<p>{pokemon.votes}</p>
-						<p>{pokemon.voted_againsts}</p>
-						<p>{pokemon.votes} </p>
-						<p>{pokemon.score}</p>
+		<>
+			<section>
+				<form action={addPokemon}>
+					<div className="container">
+						<div className="card">
+							<img src={first_pokemon.sprites?.front_default} />
+							<h3>Name: {first_pokemon.name}</h3>
+							<button className="btn">Vote</button>
+						</div>
+						<div className="card">
+							<img src={second_pokemon.sprites?.front_default} />
+							<h3>Name: {second_pokemon.name}</h3>
+							<button className="btn">Vote</button>
+						</div>
 					</div>
-				))
-			}
-		</div>
-	</section>
+				</form>
+				<div className="result">
+					<h1>Result</h1>
+					<div className="row">
+						<span>Rank</span>
+						<span>Name</span>
+						<span>Score</span>
+					</div>
+				</div>
+			</section>
+		</>
 	);
 }
 
