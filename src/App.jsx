@@ -57,38 +57,9 @@ function App() {
 	}, []);
 
 	return (
-		<div className="container">
-			<form>
-				<input
-					value={input}
-					onChange={(event) => setInput(event.target.value)}
-					className="todo-input"
-				/>
-				<button type="submit" onClick={addTodo} className="add-todo">
-					Add Todo
-				</button>
-			</form>
-
-			<ul className="todo-list">
-				{todos.map((todo) => (
-					<li key={todo.id}>
-						<div>
-							<input
-								type="checkbox"
-								checked={todo.completed}
-								onChange={() => toggleComplete(todo.id, todo.completed)}
-							/>
-							<span className={todo.completed ? "completed" : ""}>
-								{todo.todo}
-							</span>
-						</div>
-						<button onClick={() => deleteTodo(todo.id)} className="delete">
-							Delete
-						</button>
-					</li>
-				))}
-			</ul>
-		</div>
+	<section>
+		<h1>Todo App</h1>
+	</section>
 	);
 }
 
