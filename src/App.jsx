@@ -56,9 +56,24 @@ function App() {
 		return unsubscribe;
 	}, []);
 
+	const name = fetch("https://pokeapi.co/api/v2/pokemon/1/sprites/front_default")
+	console.log(name)
+
 	return (
-	<section>
-		<h1>Todo App</h1>
+	<section className="container">
+		<h1>Pokerater</h1>
+		<div>
+			<form onSubmit={addTodo}>
+				<img src="https://pokeapi.co/api/v2/pokemon/1/sprites/front_default" />
+				<h3>Name: </h3>
+				<h3>Rank: </h3>
+				<p>Score: </p>
+				<span>
+					<button>Up Vote</button>
+					<button>Down Vote</button>
+				</span>
+			</form>
+		</div>
 	</section>
 	);
 }
